@@ -1,0 +1,10 @@
+[project]
+name = "izzy-mcp-tutorials"
+version = "0.1.0"
+description = "MCP Tutorial code to demonstrate the various capabilities"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=1.13.1",
+    "pydantic>=2.11.7",
+]
