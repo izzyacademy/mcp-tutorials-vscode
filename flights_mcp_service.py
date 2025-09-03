@@ -3,13 +3,37 @@ import asyncio
 from mcp import ServerSession
 from mcp.server import FastMCP
 from mcp.server.fastmcp import Context
-from mcp.types import TextContent, SamplingMessage
 
-from izzy_mcp_tutorials import FlightsDataAccessObject, AirportCode
+from izzy_mcp_tutorials import FlightsDataAccessObject, AirportCode, PassportOwner
 from izzy_mcp_tutorials.models import TravellerInformation, FlightAvailability
 
 # Create the Flights MCP server
 mcp = FastMCP("Flights MCP Service")
+
+@mcp.tool(description="Retrieve all available passport ids")
+async def get_available_passport_ids()->list[str]:
+    """
+    Retrieve all available passport identifiers in the database.
+
+    Returns:
+        list[str]: A list of passport ids for travellers in the database.
+    """
+    dao = FlightsDataAccessObject()
+    return dao.get_passport_ids()
+
+@mcp.tool(description="Retrieve details for the owner of a specific passport id")
+async def get_passport_owner(passport_id: str) -> PassportOwner:
+    """
+    Retrieves the profile data for the specified passport id.
+
+    Args:
+        passport_id (str): The passport identifier.
+
+    Returns:
+        PassportOwner: The profile of the passport owner matching the identifier
+    """
+    dao = FlightsDataAccessObject()
+    return dao.get_passport_owner(passport_id=passport_id)
 
 @mcp.tool(description="Retrieve all dates for which flight availability data exists")
 async def get_available_dates()->list[str]:
@@ -21,24 +45,6 @@ async def get_available_dates()->list[str]:
     """
     dao = FlightsDataAccessObject()
     return dao.get_available_dates()
-
-@mcp.tool(description="Get Airport details for the specific IATA code")
-async def get_airport_details(airport_code: AirportCode, ctx: Context[ServerSession, None]) -> str:
-    """Generate details about a specific airport"""
-    prompt = f"Give me the timezone and country for the IATA airport code {airport_code}"
-
-    result = await ctx.session.create_message(
-        messages=[
-            SamplingMessage(
-                role="user",
-                content=TextContent(type="text", text=prompt),
-            )
-        ], max_tokens=2048
-    )
-
-    if result.content.type == "text":
-        return result.content.text
-    return str(result.content)
 
 @mcp.tool(description="Search for available flights between two airports on a given date")
 async def flight_search(search_date: str,
