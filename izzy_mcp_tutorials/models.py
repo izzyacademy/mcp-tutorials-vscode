@@ -19,8 +19,8 @@ class FlightAvailability(BaseModel):
     departureDate: str = Field(..., description="Departure date in YYYY-MM-DD format")
     sourceAirportCountry: CountryCode = Field(..., description="The IATA country code of the departure airport")
     destinationAirportCountry: CountryCode = Field(..., description="The IATA country code of the arrival airport")
-    travellerId: str = Field(default=None, description="The traveller identifier (Passport ID)")
-    visaRequired: bool = Field(default=None, description="Whether or not the traveler needs a travel visa")
+    travellerId: str = Field(default="", description="The traveller identifier (Passport ID)")
+    visaRequired: bool = Field(default=False, description="Whether or not the traveler needs a travel visa")
 
 class FlightDatabase(BaseModel):
     records : dict[str, list[FlightAvailability]] = Field(..., description="A map of availability dates to FlightAvailabilityRecords")

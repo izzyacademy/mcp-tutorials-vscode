@@ -42,7 +42,7 @@ class FlightsDataAccessObject:
 
         source_country = FlightsDataAccessObject.airport_country(source_airport)
         destination_country = FlightsDataAccessObject.airport_country(destination_airport)
-        print ("Hello izzy", source_country, destination_country, source_airport, destination_airport)
+        
         return source_country is not destination_country
 
     def is_destination_citizen(self, passport_id: str, airport_code: AirportCode) -> bool:
@@ -159,10 +159,10 @@ class FlightsDataAccessObject:
         # Start from today
         today = date.today()
 
-        availability_id:int = 1
-        number_of_days_from_today = 5
+        availability_id:int = 1000
+        number_of_days_from_today = 8
 
-        # Loop through today and the next n days
+        # Loop through today and the next {number_of_days_from_today} days
         for i in range(number_of_days_from_today):
             next_date = today + timedelta(days=i)
             current_date = next_date.strftime("%Y-%m-%d")
@@ -171,10 +171,28 @@ class FlightsDataAccessObject:
             for source in self.source_airports:
                 for destination in self.source_airports:
                     if source != destination:  # avoid source == destination
-                        source_country = FlightsDataAccessObject.airport_country(source)
-                        destination_country = FlightsDataAccessObject.airport_country(destination)
+                        source_country:CountryCode = FlightsDataAccessObject.airport_country(source)
+                        destination_country:CountryCode = FlightsDataAccessObject.airport_country(destination)
+                        visa_required:bool = source_country is not destination_country
 
-                        record_id = str(availability_id)
-                        availability = FlightAvailability(id=record_id, sourceAirport=source, destinationAirport=destination, departureDate=current_date, sourceAirportCountry=source_country, destinationAirportCountry=destination_country)
-                        self.database.add_flight_availability(departure_date=current_date, availability=availability)
+                        record_id_1 = str(availability_id)
+                        record_id_2 = str(availability_id + 1)
+                        record_id_3 = str(availability_id + 2)
+                        record_id_4 = str(availability_id + 3)
+                        record_id_5 = str(availability_id + 4)
+                        
+                        availability_1 = FlightAvailability(id=record_id_1, sourceAirport=source, destinationAirport=destination, departureDate=current_date, sourceAirportCountry=source_country, destinationAirportCountry=destination_country, airline="Air Canada", visaRequired=visa_required)
+                        availability_2 = FlightAvailability(id=record_id_2, sourceAirport=source, destinationAirport=destination, departureDate=current_date, sourceAirportCountry=source_country, destinationAirportCountry=destination_country, airline="Air Mexico", visaRequired=visa_required)
+                        availability_3 = FlightAvailability(id=record_id_3, sourceAirport=source, destinationAirport=destination, departureDate=current_date, sourceAirportCountry=source_country, destinationAirportCountry=destination_country, airline="Alaska Air", visaRequired=visa_required)
+                        availability_4 = FlightAvailability(id=record_id_4, sourceAirport=source, destinationAirport=destination, departureDate=current_date, sourceAirportCountry=source_country, destinationAirportCountry=destination_country, airline="Delta Airlines", visaRequired=visa_required)
+                        availability_5 = FlightAvailability(id=record_id_5, sourceAirport=source, destinationAirport=destination, departureDate=current_date, sourceAirportCountry=source_country, destinationAirportCountry=destination_country, airline="United Airlines", visaRequired=visa_required)
+                        
+                        self.database.add_flight_availability(departure_date=current_date, availability=availability_1)
+                        self.database.add_flight_availability(departure_date=current_date, availability=availability_2)
+                        self.database.add_flight_availability(departure_date=current_date, availability=availability_3)
+                        self.database.add_flight_availability(departure_date=current_date, availability=availability_4)
+                        self.database.add_flight_availability(departure_date=current_date, availability=availability_5)
+
+                availability_id = availability_id + 100
+
         return self.database
