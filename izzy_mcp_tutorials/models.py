@@ -19,8 +19,8 @@ class FlightAvailability(BaseModel):
     departureDate: str = Field(..., description="Departure date in YYYY-MM-DD format")
     sourceAirportCountry: CountryCode = Field(..., description="The IATA country code of the departure airport")
     destinationAirportCountry: CountryCode = Field(..., description="The IATA country code of the arrival airport")
-    travellerId: str = Field(default="", description="")
-    visaRequired: bool = Field(default=False, description="Whether or not the traveler needs a travel visa")
+    travellerId: str = Field(default=None, description="The traveller identifier (Passport ID)")
+    visaRequired: bool = Field(default=None, description="Whether or not the traveler needs a travel visa")
 
 class FlightDatabase(BaseModel):
     records : dict[str, list[FlightAvailability]] = Field(..., description="A map of availability dates to FlightAvailabilityRecords")
@@ -45,7 +45,7 @@ class FlightDatabase(BaseModel):
 
 class TravellerInformation(BaseModel):
     """Schema for collecting traveller information"""
-    passport_id: str = Field(description="What is the passport number for the traveller")
     traveller_has_passport: bool = Field(description="Do you have a passport?")
+    passport_id: str = Field(description="What is the passport number for the traveller")
     number_of_passengers: int = Field(description="How many passengers are on the flight")
     total_weight_of_luggage: float = Field(description="What is the total weight of luggage in kilograms")
